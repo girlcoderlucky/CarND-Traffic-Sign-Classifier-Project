@@ -18,12 +18,13 @@ The goals / steps of this project are the following:
 [image1]: ./examples/visualization.png "Visualization"
 [image2]: ./examples/grayscale_laplacian_sobel.png "Grayscaling, Laplacian, Sobel"
 [image3]: ./examples/canny_edge_dectection.png "Canny Edge Detection"
-[image4]: ./examples/Bicycle_crossing.png "Traffic Sign 1"
+[image4]: ./examples/Right_turn.png "Traffic Sign 1"
 [image5]: ./examples/Yield.png 	"Traffic Sign 2"
 [image6]: ./examples/Go_straight_or_right.png "Traffic Sign 3"
 [image7]: ./examples/No_entry.png "Traffic Sign 4"
 [image8]: ./examples/Speed70.png "Traffic Sign 5"
 [image9]: ./examples/Stop.png "Traffic Sign 6"
+[image10]: ./examples/normalized.png "Normalization"
 
 
 ---
@@ -51,7 +52,7 @@ Here is the summary statistics of the traffic signs data set:
 
 The code for this step is contained in the third and fourth code cell of the IPython notebook.  
 
-Here is an exploratory visualization of the data set. Read signnames.csv and ploted, bar chart showing how the data looks
+Here is an exploratory visualization of the data set. Read signnames.csv and ploted. Here's a histogram showing the distribution inside both the training and the testing set
 
 ![alt text][image1]
 
@@ -72,7 +73,11 @@ As a last, I stuck to color dataset since color channels provide additional info
 
 ####2. Describe how, and identify where in your code, you set up training, validation and testing data. How much data was in each set? Explain what techniques were used to split the data into these sets. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, identify where in your code, and provide example images of the additional data)
 
-The "traffic-signs-data" dataset include train, test and valid sets. I used "shuffle" to shuffle training set.
+The "traffic-signs-data" dataset include train, test and valid sets. Normalization may help in case of High contrast variation among the images so normailized the training set 
+
+![alt text][image10]
+
+Also rotated the images randomly between (0 to 20 degrees) for 10% of the training set and used "shuffle" to shuffle training set.
 	X_train, y_train = shuffle(X_train, y_train)
 	
 I generated additional dataset by spliting the data into training and validation sets by using train_test_split
@@ -136,7 +141,8 @@ LeNet works decently well for image classification which gave ~97% accuracy with
 
 ####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web and converted their size to 32x32x3.
+Here are five German traffic signs that I found on the web and converted their size to 32x32x3. 
+New test images are way brighter and clearer than the training images and also not sure if all the signs are "German" traffic signs so chances of misprediction is higher.
 
 ![alt text][image4] ![alt text][image5] ![alt text][image6] 
 ![alt text][image7] ![alt text][image8] ![alt text][image9]
@@ -144,41 +150,49 @@ Here are five German traffic signs that I found on the web and converted their s
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
-The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
+The code for making predictions on my final model is located in the tenth cell of the Ipython notebook. 
+The model was able to correctly guess 4 of the 6 traffic signs, which gives an accuracy of 66.66%. Compared to "test" set accuracy which 87% new images gave ~20% lower accuracy. 
+I think new test images are way brighter than the training images and also not sure if I download "German" traffic signs only which may have caused misprediction.
 
 Here are the results of the prediction:
 
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Bicycles crossing		| Road work   									| 
-| Yield					| Yield											|
-| Go straight or right	| Go straight or right							|
-| No entry	      		| No entry						 				|
-| Speed limit (70km/h)	| Wild animals crossing							|
-| Stop					| Stop											|
+	Actual:Turn right ahead
+	Predicted:Turn right ahead
+
+	Actual:Yield
+	Predicted:Yield
+
+	Actual:Go straight or right
+	Predicted:Go straight or right
+
+	Actual:No entry
+	Predicted:No entry
+
+	Actual:Speed limit (70km/h)
+	Predicted:Traffic signals
+
+	Actual:Stop
+	Predicted:Bicycles crossing
 
 
-The model was able to correctly guess 4 of the 6 traffic signs, which gives an accuracy of 66.66%. Not sure if I download "German" traffic signs only which might have affected the accuracy.
-
-####3. Describe how certain the model is when predicting on each of the six new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. 
+####3. Describe how certain the model is when predicting on each of the six new images by looking at the softmax probablities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. 
 The code for making predictions on my final model is located in the 15th cell of the Ipython notebook.
-
 The top five soft max probabilities were
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .99         			| Road work   									| 
-| 1.00     				| Yield 										|
+| 1.00         			| Turn right ahead								| 
+| .99     				| Yield 										|
 | .99					| Go straight or right							|
 | 1.00	      			| No entry						 				|
-| 1.00				    | Wild animals crossing							|
-| .97				    | Stop											|
+| 0.00				    | Traffic signals								|
+| .69				    | Bicycles crossing								|
 
-Below "Actual" indices 13, 36, 17, 14 matches with softmax probabilities but mispredicted index 29 is one of the top five index [25, 28, 23, 19, 36, 29]
-Actual indices [29, 13, 36, 17, 4, 14]
-indices=array([[25, 28, 23, 19, 36, 29],
-			   [13, 17, 12, 41, 32, 23],
-			   [36, 38, 41, 12, 40, 20],
-			   [17,  1, 31,  4, 29, 15],
-			   [31,  2,  1, 21, 23, 15],
-			   [14,  1,  0, 29,  2, 31]]))
+Below "Actual" indices 33, 13, 36, 17 matches with softmax probabilities 99+% but mispredicted index 14 is has 30% probablilty, is second in the top five index [29, 14,  5,  3, 13, 22]. May more turning in the training hyperparameters will yeild better prediction.
+Actual indices [33, 13, 36, 17, 4, 14]
+indices=array([	[33, 26, 25, 23, 11,  7],
+				[13, 14, 25, 10, 32,  5],
+				[36, 26, 38, 33, 39, 34],
+				[17, 14, 30, 38,  0,  1],
+				[26, 29,  0,  1,  2,  3],
+				[29, 14,  5,  3, 13, 22]]))
